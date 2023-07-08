@@ -15,36 +15,44 @@ let paddle;
 let keys;
 const paddle_vel = 300;
 let mouse_guide = false;
+let rect;
+let rect_w = 200;
+let rect_h = 30;
+let rect_container;
 
 function create(){
-    let w = 200, h = 30;
-    let x = config.width / 2;
-    let y = config.height - h / 2 - 5;
-    paddle = this.add.rectangle(x, y, w, h, 0xd1a156);
-    paddle.setInteractive()
-    // Phaser.Input.Keyboard.KeyCodes to add all keys
+    let x = config.width / 2 - rect_w / 2;
+    let y = config.height - rect_h - 5;
     keys = this.input.keyboard.addKeys("A,D,RIGHT,LEFT"); 
+    rect_container = this.add.container(x, y);
+    rect = this.add.graphics();
+    rect.fillStyle(0xd1a156);
+    rect.fillRoundedRect(0, 0, rect_w, rect_h, 10);
+    rect_container.add(rect);
+}
+  
+function check_boundaries(obj){
+    if(obj.x + rect_w > config.width){
+        obj.x = config.width - rect_w;
+    }
+    if(obj.x < 0){
+        obj.x = 0;
+    }
 }
 
-function check_boundaries(){
-    if(paddle.x + paddle.width / 2 > config.width){
-        paddle.x = config.width - paddle.width / 2;
-    }
-    if(paddle.x - paddle.width / 2 < 0){
-        paddle.x = paddle.width / 2;
+function moveByArrow(obj, speed){
+    if(keys.LEFT.isDown || keys.A.isDown){
+        obj.x -= speed;
+    }else if(keys.RIGHT.isDown || keys.D.isDown){
+        obj.x += speed;
     }
 }
 
 function update(time, delta){
     let speed = paddle_vel * (delta / 1000);
-    if(keys.LEFT.isDown || keys.A.isDown){
-        paddle.x -= speed;
-    }else if(keys.RIGHT.isDown || keys.D.isDown){
-        paddle.x += speed;
+    moveByArrow(rect_container, speed);
+    if(this.input.mousePointer.leftButtonDown()){
+        rect_container.x = this.input.mousePointer.x - 100;
     }
-    // grab the paddle: move it while the left button is pressed 
-    if(this.input.activePointer.leftButtonDown()){
-        paddle.x = this.input.mousePointer.x;
-    }
-    check_boundaries();
+    check_boundaries(rect_container);
 }
