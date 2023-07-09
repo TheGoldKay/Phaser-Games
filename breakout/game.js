@@ -2,7 +2,7 @@ let config = {
     type: Phaser.AUTO,
     width: 1200,
     height: 700,
-    backgroundColor: "#E4C89C",
+    backgroundColor: "#123524",
     fps: 60,
     scene: {
         create: create,
@@ -26,7 +26,7 @@ function create(){
     keys = this.input.keyboard.addKeys("A,D,RIGHT,LEFT"); 
     rect_container = this.add.container(x, y);
     rect = this.add.graphics();
-    rect.fillStyle(0xd1a156);
+    rect.fillStyle(0x6ed3a2);
     rect.fillRoundedRect(0, 0, rect_w, rect_h, 10);
     rect_container.add(rect);
 }

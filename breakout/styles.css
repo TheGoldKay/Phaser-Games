@@ -1,5 +1,5 @@
 body {
-    background-color:cadetblue;
+    background-color:#02190e;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -22,5 +22,5 @@ canvas {
     left: 50%;
     transform: translateX(-50%);
     top: 40px;
-    color:aqua;
+    color:#09b43c;
 }
