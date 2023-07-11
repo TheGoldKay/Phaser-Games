@@ -21,6 +21,8 @@ const box_width = 80;
 const box_height = 40;
 const gap = 22;
 let grid = [];
+let grid_rows = 4;
+let grid_cols = config.width / box_width;
 let ball;
 let ball_speed = 300;
 let ball_vel = {x: 0, y: 0};
@@ -34,10 +36,10 @@ function create(){
     player = this.add.rectangle(player_x, player_y, player_w, player_h, 0x6ed3a2);
     player.setOrigin(0, 0);
     //ball = new Phaser.Geom.Circle(x + player_w / 2, y - player_h / 2, 20);
-    ball = this.add.circle(player_x + player_w / 2, player_y - player_h / 2, 20, 0xff0000);
-    for(let row = 0; row < 4; ++row){
+    ball = this.add.circle(player_x + player_w / 2, player_y - player_h / 2, 20, 0xFF8C00);
+    for(let row = 0; row < grid_rows; ++row){
         grid[row] = [];
-        for(let col = 0; col < config.width / box_width; ++col){
+        for(let col = 0; col < grid_cols; ++col){
             let x = col * box_width + col * gap;
             let y = row * box_height + row * gap;
             // new Phaser.Geom.Rectangle(x, y, box_width, box_height);
@@ -66,9 +68,26 @@ function moveByArrow(obj, speed){
     }
 }
 
+function gridCollision(){
+    for (let row = 0; row < grid_rows; row++){
+        for(let col = 0; col < grid_cols; col++){
+            let sprite = grid[row][col];
+            if(sprite.active && Phaser.Geom.Intersects.RectangleToRectangle(sprite.getBounds(), ball.getBounds())){
+                ball_vel.y = -ball_vel.y;
+                ball.y += ball_vel.y;
+                if(ball.y < sprite.y + sprite.height){
+                    ball_vel.x = -ball_vel.x;
+                }
+                sprite.setVisible(false);
+                sprite.setActive(false);
+            }
+        }
+    }
+
+}
+
 function moveBall(ball_speed){
-    let ball_rect = new Phaser.Geom.Rectangle(ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2);
-    if(Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), ball_rect)){
+    if(Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), ball.getBounds())){
         if(game_on){
             ball_vel.y = -ball_speed;
         }else{
@@ -97,6 +116,7 @@ function moveBall(ball_speed){
 
 function update(time, delta){
     let speed = paddle_vel * (delta / 1000);
+    gridCollision();
     moveByArrow(player, speed);
     if(this.input.mousePointer.leftButtonDown()){
         player.x = this.input.mousePointer.x - 100;
