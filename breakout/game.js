@@ -5,6 +5,7 @@ let config = {
     backgroundColor: "#123524",
     fps: 60,
     scene: {
+        preload: preload,
         create: create,
         update: update,
     },
@@ -12,6 +13,9 @@ let config = {
 
 let game = new Phaser.Game(config);
 let paddle;
+let pallet;
+let pallet_scale = 0.1;
+let pallet_w, pallet_h;
 let keys;
 const paddle_vel = 500;
 let player;
@@ -28,13 +32,26 @@ let ball_speed = 300;
 let ball_vel = {x: 0, y: 0};
 let game_on = false;
 
+function preload(){
+    this.load.image("pallet", "assets/pallet.png");
+}
+
 function create(){
     let player_x = config.width / 2 - player_w / 2;
     let player_y = config.height - player_h - 5;
+    pallet = this.add.sprite(0, 0, "pallet");
+    pallet.setOrigin(0, 0);
+    pallet.setScale(pallet_scale);
+    pallet_w = pallet.width * pallet_scale;
+    pallet_h = pallet.height * pallet_scale;
+    pallet.x = config.width / 2 - pallet_w / 2;
+    pallet.y = config.height - pallet_h;
+    console.log(pallet.x, pallet.y, config.width, config.height);
     keys = this.input.keyboard.addKeys("A,D,RIGHT,LEFT,SPACE"); 
     // new Phaser.Geom.Rectangle(x, y, player_w, player_h);
-    player = this.add.rectangle(player_x, player_y, player_w, player_h, 0x6ed3a2);
-    player.setOrigin(0, 0);
+    //player = this.add.rectangle(player_x, player_y, player_w, player_h, 0x6ed3a2);
+    //player.setOrigin(0, 0);
+    player = pallet;
     //ball = new Phaser.Geom.Circle(x + player_w / 2, y - player_h / 2, 20);
     ball = this.add.circle(player_x + player_w / 2, player_y - player_h / 2, 20, 0xFF8C00);
     for(let row = 0; row < grid_rows; ++row){
@@ -51,7 +68,7 @@ function create(){
 }
 
 
-function check_boundaries(obj){
+function check_boundaries(obj, player_w){
     if(obj.x + player_w > config.width){
         obj.x = config.width - player_w;
     }
@@ -86,13 +103,13 @@ function gridCollision(){
 
 }
 
-function moveBall(ball_speed){
+function moveBall(ball_speed, player_w, player_h){
     if(Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), ball.getBounds())){
         if(game_on){
             ball_vel.y = -ball_speed;
         }else{
-            ball.x = player.x + player.width / 2;
-            ball.y = player.y - player.height / 2;
+            ball.x = player.x + player_w / 2;
+            ball.y = player.y - player_h / 2;
         }
     }
     ball.x += ball_vel.x;
@@ -121,6 +138,6 @@ function update(time, delta){
     if(this.input.mousePointer.leftButtonDown()){
         player.x = this.input.mousePointer.x - 100;
     }
-    check_boundaries(player);
-    moveBall(ball_speed * (delta / 1000));
+    check_boundaries(player, pallet_w);
+    moveBall(ball_speed * (delta / 1000), pallet_w, pallet_h);
 }
