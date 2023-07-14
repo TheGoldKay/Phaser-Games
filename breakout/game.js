@@ -28,32 +28,43 @@ let grid = [];
 let grid_rows = 4;
 let grid_cols = config.width / box_width;
 let ball;
+let circle;
+let circle_scale = 0.25;
+let circle_radius;
 let ball_speed = 300;
 let ball_vel = {x: 0, y: 0};
 let game_on = false;
 
 function preload(){
     this.load.image("pallet", "assets/pallet.png");
+    this.load.image("circle", "assets/circle.png");
 }
 
 function create(){
     let player_x = config.width / 2 - player_w / 2;
     let player_y = config.height - player_h - 5;
     pallet = this.add.sprite(0, 0, "pallet");
+    circle = this.add.sprite(0, 0, "circle");
     pallet.setOrigin(0, 0);
+    //circle.setOrigin(0, 0);
     pallet.setScale(pallet_scale);
+    circle.setScale(circle_scale);
     pallet_w = pallet.width * pallet_scale;
     pallet_h = pallet.height * pallet_scale;
+    circle_radius = circle.radius * circle_scale;
     pallet.x = config.width / 2 - pallet_w / 2;
     pallet.y = config.height - pallet_h;
-    console.log(pallet.x, pallet.y, config.width, config.height);
+    circle.x = player_x + player_w / 2; 
+    circle.y = player_y - player_h;    
+    //console.log(pallet.x, pallet.y, config.width, config.height);
     keys = this.input.keyboard.addKeys("A,D,RIGHT,LEFT,SPACE"); 
     // new Phaser.Geom.Rectangle(x, y, player_w, player_h);
     //player = this.add.rectangle(player_x, player_y, player_w, player_h, 0x6ed3a2);
     //player.setOrigin(0, 0);
     player = pallet;
     //ball = new Phaser.Geom.Circle(x + player_w / 2, y - player_h / 2, 20);
-    ball = this.add.circle(player_x + player_w / 2, player_y - player_h / 2, 20, 0xFF8C00);
+    //ball = this.add.circle(player_x + player_w / 2, player_y - player_h / 2, 20, 0xFF8C00);
+    ball = circle;
     for(let row = 0; row < grid_rows; ++row){
         grid[row] = [];
         for(let col = 0; col < grid_cols; ++col){
