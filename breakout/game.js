@@ -23,6 +23,7 @@ let player_w = 200;
 let player_h = 30;
 const box_width = 80;
 const box_height = 40;
+let box_scale_w = 0.85, box_scale_h = 0.5;
 const gap = 22;
 let grid = [];
 let grid_rows = 4;
@@ -38,6 +39,7 @@ let game_on = false;
 function preload(){
     this.load.image("pallet", "assets/pallet.png");
     this.load.image("circle", "assets/circle.png");
+    this.load.image("box", "assets/box.png");
 }
 
 function create(){
@@ -71,7 +73,10 @@ function create(){
             let x = col * box_width + col * gap;
             let y = row * box_height + row * gap;
             // new Phaser.Geom.Rectangle(x, y, box_width, box_height);
-            grid[row][col] = this.add.rectangle(x, y, box_width, box_height, 0x89CFF0);
+            //let box = this.add.rectangle(x, y, box_width, box_height, 0x89CFF0);
+            let box = this.add.sprite(x, y, "box");
+            box.setScale(box_scale_w, box_scale_h);
+            grid[row][col] = box;
             grid[row][col].setOrigin(0, 0);
         }
     }
