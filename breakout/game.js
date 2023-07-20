@@ -17,7 +17,6 @@ let config = {
         preload: preload,
         create: create,
         update: update,
-        render: render
     },
 };
 
@@ -42,10 +41,7 @@ let circle_radius;
 let ball_speed = 300;
 let ball_vel = {x: 0, y: 0};
 let game_on = false;
-
-function render(){
-    this.game.context.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-}
+let bricks;
 
 function preload(){
     this.load.image("paddle", "assets/paddle.png");
@@ -56,6 +52,7 @@ function preload(){
 function create(){
     paddle = this.physics.add.sprite(0, 0, "paddle");
     paddle.setCollideWorldBounds(true);
+    paddle.setBounce(1);
     ball = this.physics.add.sprite(0, 0, "ball");
     ball.setCollideWorldBounds(true);
     ball.setBounce(1);
@@ -70,21 +67,24 @@ function create(){
     ball.x = paddle.x + paddle_w / 2; 
     ball.y = paddle.y - paddle_h / 2;    
     keys = this.input.keyboard.addKeys("A,D,RIGHT,LEFT,SPACE"); 
+    bricks = this.physics.add.group();
     for(let row = 0; row < grid_rows; ++row){
         grid[row] = [];
         for(let col = 0; col < grid_cols; ++col){
             let brick = this.physics.add.sprite(0, 0, "brick");
             brick.setOrigin(0, 0);
+            brick.setBounce(1);
             brick.setScale(brick_scale_w, brick_scale_h);
             brick_w = brick.width * brick_scale_w;
             brick_h = brick.height * brick_scale_h;
             brick.x = col * brick_w + col * gap;
             brick.y = row * brick_h + row * gap;
             grid[row][col] = brick;
+            bricks.add(brick);
         }
     }
     this.physics.add.collider(paddle, ball, paddleBallCollision, null, this);
-
+    this.physics.add.collider(ball, bricks, ballBricksCollision, null, this);
 }
 
 function gridCollision(){
@@ -111,7 +111,13 @@ function paddleBallCollision(){
     ball.setVelocityY(-ball.body.velocity.y);
 }
 
-function update(time, delta){
+function ballBricksCollision(c, bk){
+    bk.destroy();
+    c.setVelocityY(-c.body.velocity.y);
+    c.setVelocityX(-c.body.velocity.x);
+}
+
+function update(){
     if(keys.LEFT.isDown || keys.A.isDown){
         paddle.setVelocityX(-paddle_speed);
     }
