@@ -38,7 +38,7 @@ let ball;
 let circle;
 const circle_scale = 0.25;
 let circle_radius;
-let ball_speed = 300;
+const ball_speed = 300;
 let ball_vel = {x: 0, y: 0};
 let game_on = false;
 let bricks;
@@ -52,10 +52,10 @@ function preload(){
 function create(){
     paddle = this.physics.add.sprite(0, 0, "paddle");
     paddle.setCollideWorldBounds(true);
-    paddle.setBounce(1);
+    //paddle.setBounce(1, 1);
     ball = this.physics.add.sprite(0, 0, "ball");
     ball.setCollideWorldBounds(true);
-    ball.setBounce(1.09, 1.09);
+    ball.setBounce(1, 1);
     //ball.setCircle(ball.width * circle_scale);
     paddle.setOrigin(0, 0);
     paddle.setScale(paddle_scale);
@@ -75,14 +75,14 @@ function create(){
         for(let col = 0; col < grid_cols; ++col){
             let brick = this.physics.add.sprite(0, 0, "brick");
             brick.setOrigin(0, 0);
-            brick.setBounce(1);
+            brick.setBounce(1, 1);
             brick.setScale(brick_scale_w, brick_scale_h);
             brick_w = brick.width * brick_scale_w;
             brick_h = brick.height * brick_scale_h;
             brick.x = col * brick_w + col * gap;
             brick.y = row * brick_h + row * gap;
             //grid[row][col] = brick;
-            brick.setBounce(1);
+            //brick.setBounce(1);
             brick.setSize(brick_w, brick_h);
             //brick.setOffset(0,0);
             bricks.add(brick);
@@ -92,14 +92,18 @@ function create(){
     this.physics.add.collider(ball, bricks, ballBricksCollision, null, this);
 }
 
-function paddleBallCollision(){
-    ball.setVelocityY(-ball.body.velocity.y);
+function paddleBallCollision(paddle, ball){
+    if(game_on){
+        ball.setVelocityY(-ball_speed);
+        paddle.setVelocity(0, 0);
+    }
 }
 
 function ballBricksCollision(ball, brick) {
-    ball.setVelocityY(-ball.body.velocity.y);
-    //brick.destroy();
+    ball.setVelocityY(-ball_speed);
+    brick.destroy();
 }
+
 
 function update(){
     if(keys.LEFT.isDown || keys.A.isDown){
@@ -122,5 +126,6 @@ function update(){
     }
     if(keys.SPACE.isDown){
         ball.setVelocity(ball_speed, ball_speed);
+        game_on = true;
     }
 }
