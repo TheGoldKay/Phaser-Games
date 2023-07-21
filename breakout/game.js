@@ -55,13 +55,15 @@ function create(){
     paddle.setBounce(1);
     ball = this.physics.add.sprite(0, 0, "ball");
     ball.setCollideWorldBounds(true);
-    ball.setBounce(1);
+    ball.setBounce(1.09, 1.09);
+    //ball.setCircle(ball.width * circle_scale);
     paddle.setOrigin(0, 0);
     paddle.setScale(paddle_scale);
     ball.setScale(circle_scale);
     paddle_w = paddle.width * paddle_scale;
     paddle_h = paddle.height * paddle_scale;
     circle_radius = ball.radius * circle_scale;
+    ball.setSize(circle_radius, circle_radius);
     paddle.x = config.width / 2 - paddle_w / 2;
     paddle.y = config.height - paddle_h;
     ball.x = paddle.x + paddle_w / 2; 
@@ -79,7 +81,10 @@ function create(){
             brick_h = brick.height * brick_scale_h;
             brick.x = col * brick_w + col * gap;
             brick.y = row * brick_h + row * gap;
-            grid[row][col] = brick;
+            //grid[row][col] = brick;
+            brick.setBounce(1);
+            brick.setSize(brick_w, brick_h);
+            //brick.setOffset(0,0);
             bricks.add(brick);
         }
     }
@@ -87,34 +92,13 @@ function create(){
     this.physics.add.collider(ball, bricks, ballBricksCollision, null, this);
 }
 
-function gridCollision(){
-    for (let row = 0; row < grid.length; row++){
-        for(let col = 0; col < grid[row].length; col++){
-            //console.log(row, col);
-            let sprite = grid[row][col];
-            if(sprite.visible && Phaser.Geom.Intersects.RectangleToRectangle(sprite.getBounds(), ball.getBounds())){
-                ball_vel.y = -ball_vel.y;
-                ball.y += ball_vel.y;
-                if(ball.y < sprite.y + sprite.height){
-                    ball_vel.x = -ball_vel.x;
-                }
-                sprite.setVisible(false);
-                //sprite.setActive(false);
-                //sprite.destroy();
-            }
-        }
-    }
-}
-
-
 function paddleBallCollision(){
     ball.setVelocityY(-ball.body.velocity.y);
 }
 
-function ballBricksCollision(c, bk){
-    bk.destroy();
-    c.setVelocityY(-c.body.velocity.y);
-    c.setVelocityX(-c.body.velocity.x);
+function ballBricksCollision(ball, brick) {
+    ball.setVelocityY(-ball.body.velocity.y);
+    //brick.destroy();
 }
 
 function update(){
