@@ -52,10 +52,10 @@ function preload(){
 function create(){
     paddle = this.physics.add.sprite(0, 0, "paddle");
     paddle.setCollideWorldBounds(true);
-    //paddle.setBounce(1, 1);
+    paddle.setBounce(1);
     ball = this.physics.add.sprite(0, 0, "ball");
     ball.setCollideWorldBounds(true);
-    ball.setBounce(1, 1);
+    ball.setBounce(1);
     //ball.setCircle(ball.width * circle_scale);
     paddle.setOrigin(0, 0);
     paddle.setScale(paddle_scale);
@@ -75,7 +75,7 @@ function create(){
         for(let col = 0; col < grid_cols; ++col){
             let brick = this.physics.add.sprite(0, 0, "brick");
             brick.setOrigin(0, 0);
-            brick.setBounce(1, 1);
+            brick.setBounce(1);
             brick.setScale(brick_scale_w, brick_scale_h);
             brick_w = brick.width * brick_scale_w;
             brick_h = brick.height * brick_scale_h;
@@ -85,19 +85,29 @@ function create(){
             //brick.setBounce(1);
             brick.setSize(brick_w, brick_h);
             //brick.setOffset(0,0);
+            brick.setImmovable(true);
             bricks.add(brick);
         }
     }
+    //paddle.setImmovable(true);
+    //ball.setMass(1);
+    //paddle.setMass(10);
+    //paddle.setBounce(1);
+    //ball.setBounce(1);
+
     this.physics.add.collider(paddle, ball, paddleBallCollision, null, this);
     this.physics.add.collider(ball, bricks, ballBricksCollision, null, this);
 }
 
 function paddleBallCollision(paddle, ball){
     if(game_on){
-        ball.setVelocityY(-ball_speed);
-        paddle.setVelocity(0, 0);
+        ball.setVelocityY(-ball.body.velocity.y);
+    }else{
+        ball.x = paddle.x + paddle_w / 2; 
+        ball.y = paddle.y - paddle_h / 2;    
     }
 }
+
 
 function ballBricksCollision(ball, brick) {
     ball.setVelocityY(-ball_speed);
@@ -125,7 +135,7 @@ function update(){
         ball.setVelocityY(-ball.body.velocity.y);
     }
     if(keys.SPACE.isDown){
-        ball.setVelocity(ball_speed, ball_speed);
+        ball.setVelocity(ball_speed, -ball_speed);
         game_on = true;
     }
 }
