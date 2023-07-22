@@ -89,7 +89,7 @@ function create(){
             bricks.add(brick);
         }
     }
-    //paddle.setImmovable(true);
+    paddle.setImmovable(true);
     //ball.setMass(1);
     //paddle.setMass(10);
     //paddle.setBounce(1);
