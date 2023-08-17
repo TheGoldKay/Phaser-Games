@@ -20,6 +20,8 @@ let game = new Phaser.Game(config);
 function preload(){
     this.load.image("dino_idle_1", "assets/sprites/_raw/player/idle/dino-idle-1.png");
     this.load.image("dino_idle_2", "assets/sprites/_raw/player/idle/dino-idle-2.png");
+    this.load.image("dino_run_1", "assets/sprites/_raw/player/run/dino-run-1.png");
+    this.load.image("dino_run_2", "assets/sprites/_raw/player/run/dino-run-2.png");
 }
 
 function create(){
@@ -35,9 +37,19 @@ function create(){
         repeat: -1,
     });
 
+    this.anims.create({
+        key: 'runAnimation',
+        frames:[
+            {key: 'dino_run_1'},
+            {key: 'dino_run_2'},
+        ],
+        frameRate: 1,
+        repeat: -1,
+    })
+
     this.idle = this.physics.add.sprite(0, 0, 'dino_idle_1');
     this.idle.setOrigin(0, 0);
     this.idle.x = config.width / 2 - this.idle.width / 2;
     this.idle.y = config.height - this.idle.height;
-    this.idle.anims.play('idleAnimation');  // Start playing animation
+    this.idle.anims.play('runAnimation');  // Start playing animation
 }
