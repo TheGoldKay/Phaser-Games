@@ -12,6 +12,7 @@ let config = {
     scene:{
         preload: preload, 
         create: create,
+        update: update,
     }
 };
 
@@ -48,8 +49,25 @@ function create(){
     })
 
     this.idle = this.physics.add.sprite(0, 0, 'dino_idle_1');
+    this.run = this.physics.add.sprite(0, 0, 'dino_run_1');
     this.idle.setOrigin(0, 0);
+    this.run.setOrigin(0, 0);
+    this.run.setVisible(false);
     this.idle.x = config.width / 2 - this.idle.width / 2;
     this.idle.y = config.height - this.idle.height;
-    this.idle.anims.play('runAnimation');  // Start playing animation
+    this.idle.anims.play('idleAnimation');  // Start playing animation
+    // Register the right and d keys
+    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+    this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+}
+
+function update(){
+    if(this.rightKey.isDown || this.dKey.isDown){
+        this.idle.anims.stop('idleAnimation', true);
+        this.run.setVisible(true);
+        this.idle.setVisible(false);
+        this.run.x = this.idle.x;
+        this.run.y = this.idle.y;
+        this.run.anims.play('runAnimation');
+    }
 }
