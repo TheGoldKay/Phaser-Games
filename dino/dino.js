@@ -81,7 +81,6 @@ function create(){
     sky.push(this.star2);
     sky.push(this.star3);
     makeSky(); // set random pos for every sky element
-    console.log(sky)
     //
     this.idle = this.physics.add.sprite(0, 0, 'dino_idle_1');
     this.run = this.physics.add.sprite(0, 0, 'dino_run_1');
@@ -135,25 +134,15 @@ function background(dt){
 
 function update(_, dt) {
     background(dt);
-    if (this.dKey.isDown) {
-        if (!running) {
+    if(Phaser.Input.Keyboard.JustDown(this.spaceKey)){
+        running = !running;
+        if(running){
             this.idle.anims.stop('idleAnimation', true);
             this.run.setVisible(true);
             this.idle.setVisible(false);
             this.run.anims.play('runAnimation');
-            running = true;
-        }
-        this.run.setVelocityX(dino_vel * dt);
-    } else {
-        if (running) {
-            this.run.anims.stop('runAnimation', true);
-            this.idle.anims.play('idleAnimation');
-            this.run.setVisible(false);
-            this.idle.setVisible(true);
-            this.idle.x = this.run.x;
-            this.idle.y = this.run.y;
-            running = false;
-            this.run.setVelocityX(0);
+        }else{
+            this.run.anims.stop('runAnimation');
         }
     }
 }
